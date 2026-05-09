@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Words</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d0d0f;
+    --bg2: #111115;
+    --bg3: #17171c;
+    --bg4: #1e1e25;
+    --border: rgba(255,255,255,0.06);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8e6e0;
+    --text2: #9490a0;
+    --text3: #5a5668;
+    --accent: #b89ce8;
+    --accent2: #8b6fc4;
+    --accent3: rgba(184,156,232,0.1);
+    --gold: #d4a84b;
+    --sidebar: 260px;
+  }
+
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; overflow: hidden; }
+
+  /* ── SPLASH ── */
+  #splash {
+    position: fixed; inset: 0; background: #0d0d0f; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+    transition: opacity 0.65s ease, visibility 0.65s ease;
+  }
+  #splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  .splash-logo {
+    opacity: 0; transform: translateY(12px);
+    animation: rise 0.75s cubic-bezier(.22,1,.36,1) 0.15s forwards;
+  }
+  .splash-wordmark {
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    opacity: 0; transform: translateY(10px);
+    animation: rise 0.75s cubic-bezier(.22,1,.36,1) 0.42s forwards;
+  }
+  .splash-title { font-family: 'Lora', serif; font-size: 30px; font-weight: 500; color: var(--text); letter-spacing: 0.1em; }
+  .splash-sub   { font-size: 10px; color: var(--text3); letter-spacing: 0.2em; text-transform: uppercase; }
+
+  .splash-progress {
+    width: 130px; height: 1px; background: rgba(255,255,255,0.08); border-radius: 1px; overflow: hidden;
+    opacity: 0; animation: rise 0.4s ease 0.75s forwards;
+  }
+  .splash-bar { height: 100%; width: 0; background: var(--accent); animation: barFill 1.2s ease 0.85s forwards; }
+
+  @keyframes rise    { to { opacity: 1; transform: translateY(0); } }
+  @keyframes barFill { 0%{width:0} 60%{width:72%} 100%{width:100%} }
+
+  /* ── APP ── */
+  .app {
+    display: grid; grid-template-columns: var(--sidebar) 1fr; height: 100vh;
+    opacity: 0; transition: opacity 0.5s ease;
+  }
+  .app.visible { opacity: 1; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+
+  .sidebar-header { padding: 16px 16px 14px; border-bottom: 1px solid var(--border); }
+
+  .app-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; user-select: none; }
+  .logo-svg-wrap { width: 32px; height: 32px; flex-shrink: 0; }
+  .logo-text-block { display: flex; flex-direction: column; line-height: 1.25; }
+  .logo-name    { font-family: 'Lora', serif; font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.05em; }
+  .logo-tagline { font-size: 8px; color: var(--text3); letter-spacing: 0.14em; text-transform: uppercase; }
+
+  .new-btn {
+    width: 100%; padding: 8px 12px; background: var(--accent3);
+    border: 1px solid rgba(184,156,232,0.2); border-radius: 6px;
+    color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .new-btn:hover { background: rgba(184,156,232,0.18); }
+
+  .entries-label { padding: 14px 16px 6px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); }
+
+  .entries-list { flex: 1; overflow-y: auto; padding: 4px 8px; }
+  .entries-list::-webkit-scrollbar { width: 3px; }
+  .entries-list::-webkit-scrollbar-track { background: transparent; }
+  .entries-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .entry-item { padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.12s; margin-bottom: 2px; position: relative; overflow: hidden; }
+  .entry-item:hover  { background: var(--bg3); }
+  .entry-item.active { background: var(--bg4); }
+  .entry-item.active::before { content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; background:var(--accent); border-radius:0 2px 2px 0; }
+
+  .entry-title { font-family: 'Lora', serif; font-size: 12px; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-item.active .entry-title { color: var(--accent); }
+  .entry-meta  { display: flex; align-items: center; gap: 6px; }
+  .entry-date  { font-size: 9px; color: var(--text3); }
+  .entry-preview { font-size: 9px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; font-style: italic; font-family: 'Lora', serif; }
+
+  .entry-delete {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 20px; height: 20px; background: rgba(224,75,74,0.12);
+    border: none; border-radius: 4px; color: #e24b4a; font-size: 10px;
+    cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.12s;
+  }
+  .entry-item:hover .entry-delete { display: flex; }
+  .entry-delete:hover { background: rgba(224,75,74,0.25); }
+
+  .empty-sidebar { padding: 20px 16px; text-align: center; color: var(--text3); font-size: 10px; line-height: 1.8; font-family: 'Lora', serif; font-style: italic; }
+
+  .sidebar-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .word-count-global { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; }
+  .theme-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
+
+  /* ── EDITOR ── */
+  .editor-area { display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+
+  .editor-topbar { padding: 14px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); min-height: 52px; }
+  .editor-topbar-left  { display: flex; align-items: center; gap: 12px; }
+  .editor-topbar-right { display: flex; align-items: center; gap: 10px; }
+  .mood-badges { display: flex; gap: 4px; }
+
+  .mood-badge { padding: 3px 8px; border-radius: 20px; font-size: 9px; letter-spacing: 0.06em; border: 1px solid; cursor: pointer; transition: all 0.12s; text-transform: uppercase; background: transparent; font-family: 'JetBrains Mono', monospace; }
+  .mood-badge.reflect   { color: #7fc9c9; border-color: rgba(127,201,201,0.25); }
+  .mood-badge.reflect.on{ background: rgba(127,201,201,0.12); }
+  .mood-badge.wonder    { color: var(--accent); border-color: rgba(184,156,232,0.25); }
+  .mood-badge.wonder.on { background: var(--accent3); }
+  .mood-badge.vent      { color: #e28b6a; border-color: rgba(226,139,106,0.25); }
+  .mood-badge.vent.on   { background: rgba(226,139,106,0.1); }
+  .mood-badge.gratitude { color: var(--gold); border-color: rgba(212,168,75,0.25); }
+  .mood-badge.gratitude.on { background: rgba(212,168,75,0.08); }
+
+  .save-status { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px; transition: color 0.3s; }
+  .save-dot    { width: 5px; height: 5px; border-radius: 50%; background: var(--text3); transition: background 0.3s; }
+  .save-status.saved   .save-dot { background: #63c47a; }
+  .save-status.saved   { color: #63c47a; }
+  .save-status.unsaved .save-dot { background: var(--gold); }
+  .save-status.unsaved { color: var(--gold); }
+
+  .topbar-btn { padding: 5px 10px; background: transparent; border: 1px solid var(--border2); border-radius: 5px; color: var(--text2); font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; letter-spacing: 0.04em; transition: all 0.12s; }
+  .topbar-btn:hover { background: var(--bg3); color: var(--text); }
+
+  .title-row { padding: 32px 60px 0; }
+  #entry-title-input { width: 100%; background: transparent; border: none; outline: none; font-family: 'Lora', serif; font-size: 26px; font-weight: 500; color: var(--text); letter-spacing: 0.01em; caret-color: var(--accent); }
+  #entry-title-input::placeholder { color: var(--text3); }
+  .title-line { margin: 10px 60px 0; height: 1px; background: var(--border); }
+
+  .writing-wrapper { flex: 1; overflow-y: auto; padding: 24px 60px 60px; }
+  .writing-wrapper::-webkit-scrollbar { width: 4px; }
+  .writing-wrapper::-webkit-scrollbar-track { background: transparent; }
+  .writing-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  #main-textarea { width: 100%; min-height: 100%; background: transparent; border: none; outline: none; font-family: 'Lora', serif; font-size: 16px; line-height: 1.9; color: var(--text2); caret-color: var(--accent); resize: none; letter-spacing: 0.01em; }
+  #main-textarea::placeholder { color: var(--text3); font-style: italic; }
+
+  .editor-bottombar { padding: 8px 60px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .stats { display: flex; gap: 20px; }
+  .stat  { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; }
+  .stat span { color: var(--text2); }
+  .time-stamp { font-size: 9px; color: var(--text3); font-style: italic; font-family: 'Lora', serif; }
+
+  /* ── WELCOME ── */
+  .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; text-align: center; gap: 16px; }
+  .welcome-glyph  { font-family: 'Lora', serif; font-size: 48px; color: var(--text3); opacity: 0.4; line-height: 1; margin-bottom: 8px; }
+  .welcome-title  { font-family: 'Lora', serif; font-size: 20px; color: var(--text2); font-weight: 400; }
+  .welcome-sub    { font-size: 11px; color: var(--text3); line-height: 1.8; max-width: 320px; font-style: italic; font-family: 'Lora', serif; }
+  .welcome-cta    { margin-top: 16px; padding: 9px 24px; background: var(--accent3); border: 1px solid rgba(184,156,232,0.25); border-radius: 6px; color: var(--accent); font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.15s; }
+  .welcome-cta:hover { background: rgba(184,156,232,0.18); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     SPLASH SCREEN
+════════════════════════════════════ -->
+<div id="splash">
+
+  <!-- Large centred logo -->
+  <div class="splash-logo">
+    <svg width="100" height="100" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="spG" x1="0" y1="0" x2="86" y2="86" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#c4aaff"/>
+          <stop offset="100%" stop-color="#6e42b8"/>
+        </linearGradient>
+        <linearGradient id="spI" x1="20" y1="14" x2="60" y2="70" gradientUnits="userSpaceOnUse">
+          <stop offset="0%"   stop-color="#ede0ff"/>
+          <stop offset="100%" stop-color="#a07ad4"/>
+        </linearGradient>
+        <filter id="spGlow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- bg tile -->
+      <rect width="86" height="86" rx="22" fill="url(#spG)" opacity="0.12"/>
+      <rect width="86" height="86" rx="22" fill="none" stroke="url(#spG)" stroke-width="1.2" opacity="0.35"/>
+      <g filter="url(#spGlow)">
+        <!-- spine -->
+        <line x1="43" y1="16" x2="43" y2="63" stroke="url(#spI)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- left barbs -->
+        <path d="M43 22 C36 25 27 29 22 36" stroke="url(#spI)" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+        <path d="M43 29 C37 32 29 36 26 42" stroke="url(#spI)" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.65"/>
+        <path d="M43 36 C38 39 32 43 30 48" stroke="url(#spI)" stroke-width="1"   stroke-linecap="round" fill="none" opacity="0.55"/>
+        <path d="M43 43 C39 45 36 49 34 53" stroke="url(#spI)" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.42"/>
+        <!-- right barbs -->
+        <path d="M43 22 C50 25 59 29 64 36" stroke="url(#spI)" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+        <path d="M43 29 C49 32 57 36 60 42" stroke="url(#spI)" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.65"/>
+        <path d="M43 36 C48 39 54 43 56 48" stroke="url(#spI)" stroke-width="1"   stroke-linecap="round" fill="none" opacity="0.55"/>
+        <path d="M43 43 C47 45 50 49 52 53" stroke="url(#spI)" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.42"/>
+        <!-- nib -->
+        <path d="M43 63 L38.5 55 L47.5 55 Z" fill="url(#spI)" opacity="0.95"/>
+        <!-- ink drop -->
+        <ellipse cx="43" cy="69" rx="2.4" ry="3.5" fill="#b89ce8" opacity="0.55"/>
+      </g>
+      <!-- shine -->
+      <line x1="25" y1="14" x2="31" y2="20" stroke="white" stroke-width="0.8" stroke-linecap="round" opacity="0.15"/>
+    </svg>
+  </div>
+
+  <!-- Wordmark -->
+  <div class="splash-wordmark">
+    <span class="splash-title">Deep Words</span>
+    <span class="splash-sub">a sanctuary for your thoughts</span>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="splash-progress">
+    <div class="splash-bar"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════
+     MAIN APP
+════════════════════════════════════ -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+
+      <!-- Logo — small version in top-left -->
+      <div class="app-logo">
+        <div class="logo-svg-wrap">
+          <svg width="32" height="32" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sdG" x1="0" y1="0" x2="86" y2="86" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#c4aaff"/>
+                <stop offset="100%" stop-color="#6e42b8"/>
+              </linearGradient>
+              <linearGradient id="sdI" x1="20" y1="14" x2="60" y2="70" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#ede0ff"/>
+                <stop offset="100%" stop-color="#a07ad4"/>
+              </linearGradient>
+            </defs>
+            <rect width="86" height="86" rx="22" fill="url(#sdG)" opacity="0.16"/>
+            <rect width="86" height="86" rx="22" fill="none" stroke="url(#sdG)" stroke-width="1.4" opacity="0.4"/>
+            <line x1="43" y1="16" x2="43" y2="63" stroke="url(#sdI)" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M43 22 C36 25 27 29 22 36" stroke="url(#sdI)" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+            <path d="M43 29 C37 32 29 36 26 42" stroke="url(#sdI)" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.65"/>
+            <path d="M43 36 C38 39 32 43 30 48" stroke="url(#sdI)" stroke-width="1"   stroke-linecap="round" fill="none" opacity="0.55"/>
+            <path d="M43 43 C39 45 36 49 34 53" stroke="url(#sdI)" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.42"/>
+            <path d="M43 22 C50 25 59 29 64 36" stroke="url(#sdI)" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+            <path d="M43 29 C49 32 57 36 60 42" stroke="url(#sdI)" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.65"/>
+            <path d="M43 36 C48 39 54 43 56 48" stroke="url(#sdI)" stroke-width="1"   stroke-linecap="round" fill="none" opacity="0.55"/>
+            <path d="M43 43 C47 45 50 49 52 53" stroke="url(#sdI)" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.42"/>
+            <path d="M43 63 L38.5 55 L47.5 55 Z" fill="url(#sdI)" opacity="0.95"/>
+            <ellipse cx="43" cy="69" rx="2.4" ry="3.5" fill="#b89ce8" opacity="0.55"/>
+          </svg>
+        </div>
+        <div class="logo-text-block">
+          <span class="logo-name">Deep Words</span>
+          <span class="logo-tagline">your sanctuary</span>
+        </div>
+      </div>
+
+      <button class="new-btn" onclick="newEntry()">+ new entry</button>
+    </div>
+
+    <div class="entries-label">Your thoughts</div>
+    <div class="entries-list" id="entries-list">
+      <div class="empty-sidebar">No entries yet.<br>Start writing your first thought.</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <span class="word-count-global" id="global-count">0 entries</span>
+      <div class="theme-dot"></div>
+    </div>
+  </aside>
+
+  <!-- EDITOR -->
+  <main class="editor-area">
+
+    <div class="welcome-screen" id="welcome-screen">
+      <div class="welcome-glyph">"</div>
+      <div class="welcome-title">A quiet place for your thoughts</div>
+      <div class="welcome-sub">Write freely. No audience, no pressure.<br>Just you and your words, remembered over time.</div>
+      <button class="welcome-cta" onclick="newEntry()">begin writing</button>
+    </div>
+
+    <div id="editor-view" class="hidden" style="display:flex;flex-direction:column;height:100%;">
+      <div class="editor-topbar">
+        <div class="editor-topbar-left">
+          <div class="mood-badges">
+            <button class="mood-badge reflect"   onclick="toggleMood('reflect',this)">reflect</button>
+            <button class="mood-badge wonder"    onclick="toggleMood('wonder',this)">wonder</button>
+            <button class="mood-badge vent"      onclick="toggleMood('vent',this)">vent</button>
+            <button class="mood-badge gratitude" onclick="toggleMood('gratitude',this)">gratitude</button>
+          </div>
+        </div>
+        <div class="editor-topbar-right">
+          <div class="save-status saved" id="save-status">
+            <div class="save-dot"></div>
+            <span id="save-text">saved</span>
+          </div>
+          <button class="topbar-btn" onclick="saveEntry()">save</button>
+          <button class="topbar-btn" onclick="deleteCurrentEntry()" style="color:#e28b6a;border-color:rgba(226,139,106,0.2);">delete</button>
+        </div>
+      </div>
+
+      <div class="title-row">
+        <input type="text" id="entry-title-input" placeholder="Title your thought..." maxlength="80" oninput="markUnsaved()">
+      </div>
+      <div class="title-line"></div>
+
+      <div class="writing-wrapper">
+        <textarea id="main-textarea"
+          placeholder="Let the words find you…&#10;&#10;Write what's on your mind. No rules. No judgment. Just honesty."
+          oninput="onType()"></textarea>
+      </div>
+
+      <div class="editor-bottombar">
+        <div class="stats">
+          <div class="stat">words <span id="stat-words">0</span></div>
+          <div class="stat">chars <span id="stat-chars">0</span></div>
+          <div class="stat">lines <span id="stat-lines">0</span></div>
+        </div>
+        <div class="time-stamp" id="time-stamp"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  /* ── Splash ── */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hide');
+      document.getElementById('app').classList.add('visible');
+      setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 700);
+    }, 2300);
+  });
+
+  /* ── Data ── */
+  const STORAGE_KEY = 'deepwords_entries_v1';
+  let entries = [], currentId = null, saveTimer = null, currentMood = null;
+
+  function loadEntries()   { try { const r = localStorage.getItem(STORAGE_KEY); entries = r ? JSON.parse(r) : []; } catch(e) { entries = []; } }
+  function persistEntries(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e){} }
+  function genId()         { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+  function fmtDate(ts) {
+    const d = new Date(ts), now = new Date(), diff = (now - d) / 1000;
+    if (diff < 60)    return 'just now';
+    if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return d.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+  }
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderSidebar() {
+    const list = document.getElementById('entries-list');
+    const gc   = document.getElementById('global-count');
+    if (entries.length === 0) {
+      list.innerHTML = '<div class="empty-sidebar">No entries yet.<br>Start writing your first thought.</div>';
+      gc.textContent = '0 entries'; return;
+    }
+    gc.textContent = entries.length + (entries.length === 1 ? ' entry' : ' entries');
+    list.innerHTML = [...entries].sort((a,b)=>b.updatedAt-a.updatedAt).map(e=>`
+      <div class="entry-item ${e.id===currentId?'active':''}" onclick="openEntry('${e.id}')">
+        <div class="entry-title">${escHtml(e.title||'Untitled')}</div>
+        <div class="entry-meta">
+          <span class="entry-date">${fmtDate(e.updatedAt)}</span>
+          <span class="entry-preview">${escHtml((e.body||'').slice(0,40))}</span>
+        </div>
+        <button class="entry-delete" onclick="event.stopPropagation();deleteEntry('${e.id}')" title="delete">&#x2715;</button>
+      </div>`).join('');
+  }
+
+  function showWelcome() {
+    document.getElementById('welcome-screen').classList.remove('hidden');
+    const ev = document.getElementById('editor-view');
+    ev.classList.add('hidden'); ev.style.display='none';
+    currentId = null; renderSidebar();
+  }
+  function showEditor() {
+    document.getElementById('welcome-screen').classList.add('hidden');
+    const ev = document.getElementById('editor-view');
+    ev.classList.remove('hidden'); ev.style.display='flex';
+  }
+
+  function newEntry() {
+    saveCurrentIfDirty();
+    const id=genId(), now=Date.now();
+    entries.unshift({ id, title:'', body:'', mood:null, createdAt:now, updatedAt:now });
+    currentId=id; currentMood=null;
+    persistEntries(); loadIntoEditor(entries[0]); showEditor(); renderSidebar();
+    setTimeout(()=>document.getElementById('entry-title-input').focus(), 50);
+    setSaved();
+  }
+
+  function openEntry(id) {
+    saveCurrentIfDirty();
+    const entry = entries.find(e=>e.id===id);
+    if (!entry) return;
+    currentId=id; loadIntoEditor(entry); showEditor(); renderSidebar(); setSaved();
+  }
+
+  function loadIntoEditor(entry) {
+    document.getElementById('entry-title-input').value = entry.title||'';
+    document.getElementById('main-textarea').value     = entry.body||'';
+    currentMood = entry.mood||null;
+    document.querySelectorAll('.mood-badge').forEach(b=>b.classList.toggle('on', b.classList.contains(currentMood)));
+    updateStats(); updateTimestamp(entry.updatedAt);
+  }
+
+  function saveCurrentIfDirty() {
+    if (currentId && document.getElementById('save-status').classList.contains('unsaved')) saveEntry(true);
+  }
+
+  function saveEntry(silent) {
+    if (!currentId) return;
+    const idx = entries.findIndex(e=>e.id===currentId);
+    if (idx===-1) return;
+    entries[idx].title     = document.getElementById('entry-title-input').value.trim();
+    entries[idx].body      = document.getElementById('main-textarea').value;
+    entries[idx].mood      = currentMood;
+    entries[idx].updatedAt = Date.now();
+    persistEntries();
+    if (!silent) { setSaved(); renderSidebar(); }
+  }
+
+  function deleteEntry(id) {
+    entries = entries.filter(e=>e.id!==id); persistEntries();
+    if (id===currentId) { currentId=null; entries.length>0 ? openEntry(entries[0].id) : showWelcome(); }
+    renderSidebar();
+  }
+  function deleteCurrentEntry() { if (currentId) deleteEntry(currentId); }
+
+  function onType()      { markUnsaved(); updateStats(); scheduleSave(); }
+  function markUnsaved() { document.getElementById('save-status').className='save-status unsaved'; document.getElementById('save-text').textContent='unsaved'; }
+  function setSaved()    { document.getElementById('save-status').className='save-status saved';   document.getElementById('save-text').textContent='saved'; }
+  function scheduleSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ saveEntry(true); setSaved(); renderSidebar(); },1200); }
+
+  function toggleMood(mood, btn) {
+    if (currentMood===mood) { currentMood=null; btn.classList.remove('on'); }
+    else { currentMood=mood; document.querySelectorAll('.mood-badge').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+    markUnsaved(); scheduleSave();
+  }
+
+  function updateStats() {
+    const body = document.getElementById('main-textarea').value;
+    document.getElementById('stat-words').textContent = body.trim() ? body.trim().split(/\s+/).length : 0;
+    document.getElementById('stat-chars').textContent = body.length;
+    document.getElementById('stat-lines').textContent = body ? body.split('\n').length : 0;
+  }
+
+  function updateTimestamp(ts) {
+    document.getElementById('time-stamp').textContent = new Date(ts).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  }
+
+  /* ── Init ── */
+  loadEntries();
+  if (entries.length>0) { currentId=entries[0].id; loadIntoEditor(entries[0]); showEditor(); }
+  renderSidebar();
+</script>
+</body>
+</html>
