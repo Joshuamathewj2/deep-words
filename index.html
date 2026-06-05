@@ -172,6 +172,93 @@
   .welcome-cta:hover { background: rgba(184,156,232,0.18); }
 
   .hidden { display: none !important; }
+
+  /* ── SELECTION SCREEN ── */
+  #selection-screen {
+    position: fixed; inset: 0; background: var(--bg); z-index: 9000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+    opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  #selection-screen.visible { opacity: 1; visibility: visible; }
+  
+  .selection-title { font-family: 'Lora', serif; font-size: 22px; color: var(--text2); letter-spacing: 0.05em; font-weight: 400; font-style: italic; opacity: 0; transform: translateY(10px); animation: rise 0.6s ease forwards 0.2s; }
+  .selection-row { display: flex; gap: 20px; opacity: 0; transform: translateY(10px); animation: rise 0.6s ease forwards 0.4s; }
+  
+  .select-card {
+    width: 240px; padding: 40px 24px; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+  }
+  .select-card:hover { background: var(--bg3); border-color: var(--accent); transform: translateY(-4px); }
+  .select-card i { font-family: 'Lora', serif; font-style: italic; font-size: 32px; color: var(--accent); font-weight: 500; }
+  .select-card span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text2); }
+  .select-card p { font-size: 10px; color: var(--text3); font-family: 'Lora', serif; font-style: italic; margin-top: -8px; }
+
+  /* ── PROBLEMS PAGE ── */
+  #problems-page {
+    position: fixed; inset: 0; background: var(--bg); z-index: 8000;
+    display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease;
+    overflow: hidden;
+  }
+  #problems-page.visible { opacity: 1; visibility: visible; }
+  
+  .prob-header { padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .prob-header-left { display: flex; align-items: center; gap: 20px; }
+  .prob-back-btn { background: transparent; border: 1px solid var(--border2); color: var(--text3); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.2s; }
+  .prob-back-btn:hover { color: var(--text); border-color: var(--text3); }
+  .prob-title { font-family: 'Lora', serif; font-size: 24px; color: var(--text); }
+  
+  .problems-body { flex: 1; overflow-y: auto; padding: 40px 60px; }
+  .problems-body::-webkit-scrollbar { width: 4px; }
+  .problems-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  
+  .problems-container { max-width: 800px; margin: 0 auto; width: 100%; }
+  
+  .prob-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; transition: all 0.2s; }
+  .prob-item.solved { border-color: rgba(99, 196, 122, 0.2); }
+  .prob-summary { padding: 18px 24px; display: flex; align-items: center; gap: 18px; cursor: pointer; }
+  .prob-summary:hover { background: var(--bg3); }
+  
+  .prob-check { width: 20px; height: 20px; border: 1.5px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+  .prob-check:hover { border-color: var(--accent); }
+  .prob-check.on { background: var(--accent); border-color: var(--accent); }
+  .prob-check.on::after { content: 'L'; transform: scaleX(-1) rotate(-35deg); color: var(--bg); font-size: 11px; margin-top: -2px; }
+  
+  .prob-label { flex: 1; font-family: 'Lora', serif; font-size: 16px; color: var(--text2); transition: color 0.2s; }
+  .solved .prob-label { text-decoration: line-through; color: var(--text3); }
+  
+  .prob-details { display: none; padding: 0 24px 24px 62px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.1); }
+  .prob-item.open .prob-details { display: block; }
+  
+  .detail-sec { margin-top: 20px; }
+  .detail-label { font-size: 9px; text-transform: uppercase; color: var(--text3); letter-spacing: 0.12em; margin-bottom: 6px; }
+  .detail-text { font-size: 14px; color: var(--text2); line-height: 1.7; font-family: 'Lora', serif; white-space: pre-wrap; }
+  .detail-meta { margin-top: 24px; font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+  
+  .prob-del-btn { background: transparent; border: none; color: #e28b6a; font-size: 10px; cursor: pointer; opacity: 0.6; transition: 0.2s; padding: 0; }
+  .prob-del-btn:hover { opacity: 1; text-decoration: underline; }
+
+  /* ── MODAL ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(8,8,10,0.85); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.visible { display: flex; }
+  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; width: 540px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: translateY(20px); animation: rise 0.4s ease forwards; }
+  .modal-h { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 28px; color: var(--text); }
+  
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.1em; }
+  .form-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; color: var(--text); font-family: 'Lora', serif; font-size: 15px; outline: none; transition: 0.2s; }
+  .form-input:focus { border-color: var(--accent); background: var(--bg2); }
+  .form-textarea { height: 120px; resize: none; line-height: 1.6; }
+  
+  .form-btns { display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; }
+  .btn-s { padding: 12px 24px; border-radius: 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; text-transform: uppercase; letter-spacing: 0.1em; }
+  .btn-cancel { background: transparent; color: var(--text3); border-color: var(--border); }
+  .btn-cancel:hover { color: var(--text); border-color: var(--text3); }
+  .btn-save { background: var(--accent3); color: var(--accent); border-color: rgba(184,156,232,0.3); }
+  .btn-save:hover { background: var(--accent); color: var(--bg); }
+  
+  .empty-probs { padding: 80px 20px; text-align: center; color: var(--text3); font-family: 'Lora', serif; font-style: italic; font-size: 15px; }
 </style>
 </head>
 <body>
@@ -197,6 +284,67 @@
     <div class="splash-bar"></div>
   </div>
 
+</div>
+
+<!-- ════════════════════════════════════
+     SELECTION SCREEN
+════════════════════════════════════ -->
+<div id="selection-screen">
+  <div class="selection-title">How would you like to proceed?</div>
+  <div class="selection-row">
+    <div class="select-card" onclick="goToApp()">
+      <i>"</i>
+      <span>Normal Conversation</span>
+      <p>Enter the sanctuary</p>
+    </div>
+    <div class="select-card" onclick="goToProblems()">
+      <i>?</i>
+      <span>Problems</span>
+      <p>The problem ledger</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     PROBLEMS PAGE
+════════════════════════════════════ -->
+<div id="problems-page">
+  <header class="prob-header">
+    <div class="prob-header-left">
+      <button class="prob-back-btn" onclick="backToSelection()">← back</button>
+      <h1 class="prob-title">Problem Ledger</h1>
+    </div>
+    <button class="new-btn" style="width:auto; padding: 10px 20px;" onclick="toggleProblemForm(true)">+ add new problem</button>
+  </header>
+
+  <div class="problems-body">
+    <div class="problems-container" id="problems-list">
+      <!-- Problems will be rendered here -->
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM MODAL -->
+<div class="modal-overlay" id="problem-modal">
+  <div class="modal">
+    <h2 class="modal-h">Identify the Problem</h2>
+    <div class="form-group">
+      <label class="form-label">Problem Title</label>
+      <input type="text" id="prob-title-input" class="form-input" placeholder="e.g. Professor Issue">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Problem Description</label>
+      <textarea id="prob-desc-input" class="form-input form-textarea" placeholder="What is worrying you?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Solution I Will Implement</label>
+      <textarea id="prob-sol-input" class="form-input form-textarea" placeholder="How will you address this?"></textarea>
+    </div>
+    <div class="form-btns">
+      <button class="btn-s btn-cancel" onclick="toggleProblemForm(false)">Cancel</button>
+      <button class="btn-s btn-save" onclick="saveProblem()">Save Problem</button>
+    </div>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════
@@ -290,20 +438,44 @@
 
 <script>
   /* ── Splash ── */
+  /* ── Splash & Navigation ── */
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('splash').classList.add('hide');
-      document.getElementById('app').classList.add('visible');
+      document.getElementById('selection-screen').classList.add('visible');
       setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 700);
     }, 2300);
   });
 
+  function goToApp() {
+    document.getElementById('selection-screen').classList.remove('visible');
+    document.getElementById('problems-page').classList.remove('visible');
+    document.getElementById('app').classList.add('visible');
+  }
+
+  function goToProblems() {
+    document.getElementById('selection-screen').classList.remove('visible');
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('problems-page').classList.add('visible');
+    renderProblems();
+  }
+
+  function backToSelection() {
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('problems-page').classList.remove('visible');
+    document.getElementById('selection-screen').classList.add('visible');
+  }
+
   /* ── Data ── */
   const STORAGE_KEY = 'deepwords_entries_v1';
-  let entries = [], currentId = null, saveTimer = null, currentMood = null;
+  const PROBLEMS_KEY = 'deepwords_problems_v1';
+  let entries = [], problems = [], currentId = null, saveTimer = null, currentMood = null;
 
   function loadEntries()   { try { const r = localStorage.getItem(STORAGE_KEY); entries = r ? JSON.parse(r) : []; } catch(e) { entries = []; } }
   function persistEntries(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e){} }
+  
+  function loadProblems()   { try { const r = localStorage.getItem(PROBLEMS_KEY); problems = r ? JSON.parse(r) : []; } catch(e) { problems = []; } }
+  function persistProblems(){ try { localStorage.setItem(PROBLEMS_KEY, JSON.stringify(problems)); } catch(e){} }
   function genId()         { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
   function fmtDate(ts) {
@@ -416,9 +588,104 @@
     document.getElementById('time-stamp').textContent = new Date(ts).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
   }
 
+  /* ── Problems Ledger Logic ── */
+  function toggleProblemForm(show) {
+    const modal = document.getElementById('problem-modal');
+    modal.classList.toggle('visible', show);
+    if (!show) {
+      document.getElementById('prob-title-input').value = '';
+      document.getElementById('prob-desc-input').value = '';
+      document.getElementById('prob-sol-input').value = '';
+    }
+  }
+
+  function saveProblem() {
+    const title = document.getElementById('prob-title-input').value.trim();
+    const desc = document.getElementById('prob-desc-input').value.trim();
+    const sol = document.getElementById('prob-sol-input').value.trim();
+    
+    if (!title) return alert('Please provide a title.');
+
+    const newProb = {
+      id: genId(),
+      title,
+      desc,
+      sol,
+      solved: false,
+      createdAt: Date.now()
+    };
+
+    problems.unshift(newProb);
+    persistProblems();
+    renderProblems();
+    toggleProblemForm(false);
+  }
+
+  function toggleSolve(id, event) {
+    if (event) event.stopPropagation();
+    const idx = problems.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      problems[idx].solved = !problems[idx].solved;
+      persistProblems();
+      renderProblems();
+    }
+  }
+
+  function deleteProblem(id, event) {
+    if (event) event.stopPropagation();
+    if (!confirm('Are you sure you want to delete this problem?')) return;
+    problems = problems.filter(p => p.id !== id);
+    persistProblems();
+    renderProblems();
+  }
+
+  function toggleExpand(id) {
+    const el = document.getElementById(`prob-${id}`);
+    if (el) el.classList.toggle('open');
+  }
+
+  function renderProblems() {
+    const list = document.getElementById('problems-list');
+    if (problems.length === 0) {
+      list.innerHTML = '<div class="empty-probs">Your ledger is empty.<br>Identify what weighs on you and plan your path forward.</div>';
+      return;
+    }
+
+    list.innerHTML = problems.map(p => `
+      <div class="prob-item ${p.solved ? 'solved' : ''}" id="prob-${p.id}">
+        <div class="prob-summary" onclick="toggleExpand('${p.id}')">
+          <div class="prob-check ${p.solved ? 'on' : ''}" onclick="toggleSolve('${p.id}', event)"></div>
+          <div class="prob-label">${escHtml(p.title)}</div>
+        </div>
+        <div class="prob-details">
+          <div class="detail-sec">
+            <div class="detail-label">Problem</div>
+            <div class="detail-text">${escHtml(p.desc || 'No description provided.')}</div>
+          </div>
+          <div class="detail-sec">
+            <div class="detail-label">Planned Solution</div>
+            <div class="detail-text">${escHtml(p.sol || 'No solution planned yet.')}</div>
+          </div>
+          <div class="detail-meta">
+            <span>Created ${new Date(p.createdAt).toLocaleDateString()}</span>
+            <span>Status: ${p.solved ? 'Solved' : 'Active'}</span>
+            <button class="prob-del-btn" onclick="deleteProblem('${p.id}', event)">Delete</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
   /* ── Init ── */
   loadEntries();
-  if (entries.length>0) { currentId=entries[0].id; loadIntoEditor(entries[0]); showEditor(); }
+  loadProblems();
+  if (entries.length > 0) { 
+    currentId = entries[0].id; 
+    loadIntoEditor(entries[0]); 
+    showEditor(); 
+  } else {
+    showWelcome();
+  }
   renderSidebar();
 </script>
 </body>
