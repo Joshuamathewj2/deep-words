@@ -4,33 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deep Words</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #0d0d0f;
-    --bg2: #111115;
-    --bg3: #17171c;
-    --bg4: #1e1e25;
-    --border: rgba(255,255,255,0.06);
-    --border2: rgba(255,255,255,0.12);
-    --text: #e8e6e0;
-    --text2: #9490a0;
-    --text3: #5a5668;
-    --accent: #b89ce8;
-    --accent2: #8b6fc4;
-    --accent3: rgba(184,156,232,0.1);
-    --gold: #d4a84b;
-    --sidebar: 260px;
+    --bg: #FDFBF7;
+    --bg2: #F3EEE3;
+    --bg3: #EDE7DA;
+    --bg4: #E6DFD0;
+    --border: rgba(160, 140, 110, 0.18);
+    --border2: rgba(160, 140, 110, 0.32);
+    --text: #3D3529;
+    --text2: #5C4F40;
+    --text3: #A69882;
+    --accent: #7B5EA7;
+    --accent2: #6B4E97;
+    --accent3: rgba(123, 94, 167, 0.09);
+    --gold: #B8860B;
+    --sidebar: 270px;
+    --paper: #FFFDF9;
+    --ruled: rgba(175, 200, 225, 0.45);
+    --margin: rgba(210, 140, 140, 0.38);
+    --highlight: rgba(255, 238, 170, 0.45);
+    --highlight-active: rgba(255, 228, 130, 0.50);
+    --desk: #E9E3D5;
   }
 
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; overflow: hidden; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'EB Garamond', 'Georgia', serif;
+    overflow: hidden;
+  }
 
   /* ── SPLASH ── */
   #splash {
-    position: fixed; inset: 0; background: #0d0d0f; z-index: 9999;
+    position: fixed; inset: 0; background: var(--bg); z-index: 9999;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
     transition: opacity 0.65s ease, visibility 0.65s ease;
   }
@@ -45,14 +57,31 @@
     opacity: 0; transform: translateY(10px);
     animation: rise 0.75s cubic-bezier(.22,1,.36,1) 0.42s forwards;
   }
-  .splash-title { font-family: 'Lora', serif; font-size: 30px; font-weight: 500; color: var(--text); letter-spacing: 0.1em; }
-  .splash-sub   { font-size: 10px; color: var(--text3); letter-spacing: 0.2em; text-transform: uppercase; }
+  .splash-title {
+    font-family: 'Caveat', cursive;
+    font-size: 38px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+  .splash-sub {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'EB Garamond', serif;
+  }
 
   .splash-progress {
-    width: 130px; height: 1px; background: rgba(255,255,255,0.08); border-radius: 1px; overflow: hidden;
+    width: 140px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden;
     opacity: 0; animation: rise 0.4s ease 0.75s forwards;
   }
-  .splash-bar { height: 100%; width: 0; background: var(--accent); animation: barFill 1.2s ease 0.85s forwards; }
+  .splash-bar {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 2px;
+    animation: barFill 1.2s ease 0.85s forwards;
+  }
 
   @keyframes rise    { to { opacity: 1; transform: translateY(0); } }
   @keyframes barFill { 0%{width:0} 60%{width:72%} 100%{width:100%} }
@@ -64,113 +93,370 @@
   }
   .app.visible { opacity: 1; }
 
-  /* ── SIDEBAR ── */
-  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  /* ── SIDEBAR (kraft / linen index column) ── */
+  .sidebar {
+    background: var(--bg2);
+    border-right: 1.5px solid var(--border2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
 
-  .sidebar-header { padding: 16px 16px 14px; border-bottom: 1px solid var(--border); }
+  .sidebar-header {
+    padding: 18px 18px 16px;
+    border-bottom: 1.5px solid var(--border);
+  }
 
-  .app-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; user-select: none; }
+  .app-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; user-select: none; }
   .logo-svg-wrap { width: 32px; height: 32px; flex-shrink: 0; }
   .logo-text-block { display: flex; flex-direction: column; line-height: 1.25; }
-  .logo-name    { font-family: 'Lora', serif; font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.05em; }
-  .logo-tagline { font-size: 8px; color: var(--text3); letter-spacing: 0.14em; text-transform: uppercase; }
+  .logo-name {
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .logo-tagline {
+    font-size: 8.5px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'EB Garamond', serif;
+  }
 
   .new-btn {
-    width: 100%; padding: 8px 12px; background: var(--accent3);
-    border: 1px solid rgba(184,156,232,0.2); border-radius: 6px;
-    color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 11px;
-    cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
-    transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; padding: 9px 14px;
+    background: var(--bg);
+    border: 1.5px dashed var(--border2);
+    border-radius: 8px;
+    color: var(--text2);
+    font-family: 'EB Garamond', serif;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .new-btn:hover { background: rgba(184,156,232,0.18); }
+  .new-btn:hover {
+    background: var(--bg3);
+    border-color: var(--accent);
+    border-style: solid;
+    color: var(--accent);
+  }
 
-  .entries-label { padding: 14px 16px 6px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); }
+  .entries-label {
+    padding: 16px 18px 8px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
 
-  .entries-list { flex: 1; overflow-y: auto; padding: 4px 8px; }
+  .entries-list { flex: 1; overflow-y: auto; padding: 4px 10px; }
   .entries-list::-webkit-scrollbar { width: 3px; }
   .entries-list::-webkit-scrollbar-track { background: transparent; }
   .entries-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-  .entry-item { padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.12s; margin-bottom: 2px; position: relative; overflow: hidden; }
-  .entry-item:hover  { background: var(--bg3); }
-  .entry-item.active { background: var(--bg4); }
-  .entry-item.active::before { content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; background:var(--accent); border-radius:0 2px 2px 0; }
+  .entry-item {
+    padding: 10px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    position: relative;
+    overflow: hidden;
+    border-left: 3px solid transparent;
+  }
+  .entry-item:hover {
+    background: var(--highlight);
+  }
+  .entry-item.active {
+    background: var(--highlight-active);
+    border-left-color: var(--accent);
+  }
+  .entry-item.active::before { content: none; }
 
-  .entry-title { font-family: 'Lora', serif; font-size: 12px; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .entry-item.active .entry-title { color: var(--accent); }
+  .entry-title {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .entry-item.active .entry-title { color: var(--accent2); }
   .entry-meta  { display: flex; align-items: center; gap: 6px; }
-  .entry-date  { font-size: 9px; color: var(--text3); }
-  .entry-preview { font-size: 9px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; font-style: italic; font-family: 'Lora', serif; }
+  .entry-date  { font-size: 9px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+  .entry-preview {
+    font-size: 10.5px;
+    color: var(--text3);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex: 1;
+    font-style: italic;
+    font-family: 'EB Garamond', serif;
+  }
 
   .entry-delete {
     position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-    width: 20px; height: 20px; background: rgba(224,75,74,0.12);
-    border: none; border-radius: 4px; color: #e24b4a; font-size: 10px;
+    width: 22px; height: 22px; background: rgba(190, 70, 60, 0.08);
+    border: none; border-radius: 4px; color: #B8443A; font-size: 10px;
     cursor: pointer; display: none; align-items: center; justify-content: center; transition: background 0.12s;
   }
   .entry-item:hover .entry-delete { display: flex; }
-  .entry-delete:hover { background: rgba(224,75,74,0.25); }
+  .entry-delete:hover { background: rgba(190, 70, 60, 0.18); }
 
-  .empty-sidebar { padding: 20px 16px; text-align: center; color: var(--text3); font-size: 10px; line-height: 1.8; font-family: 'Lora', serif; font-style: italic; }
+  .empty-sidebar {
+    padding: 24px 18px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 15px;
+    line-height: 1.8;
+    font-family: 'Caveat', cursive;
+  }
 
-  .sidebar-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .word-count-global { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; }
-  .theme-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
+  .sidebar-footer {
+    padding: 10px 18px;
+    border-top: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .word-count-global { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; font-family: 'JetBrains Mono', monospace; }
+  .theme-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); opacity: 0.35; }
 
-  /* ── EDITOR ── */
-  .editor-area { display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+  /* ── EDITOR AREA (the "desk" behind the page) ── */
+  .editor-area {
+    display: flex;
+    flex-direction: column;
+    background: var(--desk);
+    overflow: hidden;
+    position: relative;
+    padding: 20px 28px;
+  }
 
-  .editor-topbar { padding: 14px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); min-height: 52px; }
-  .editor-topbar-left  { display: flex; align-items: center; gap: 12px; }
+  /* Book-fold / binding shadow along left edge */
+  .editor-area::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 30px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.05) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* The notebook page surface */
+  #editor-view {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: var(--paper);
+    border-radius: 6px 10px 10px 3px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 4px 16px rgba(0,0,0,0.05),
+      0 12px 32px rgba(0,0,0,0.03),
+      inset 3px 0 8px rgba(0,0,0,0.02);
+    overflow: hidden;
+  }
+
+  .editor-topbar {
+    padding: 12px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    min-height: 48px;
+    position: relative;
+    z-index: 1;
+  }
+  .editor-topbar-left  { display: flex; align-items: center; gap: 8px; }
   .editor-topbar-right { display: flex; align-items: center; gap: 10px; }
-  .mood-badges { display: flex; gap: 4px; }
+  .mood-badges { display: flex; gap: 6px; }
 
-  .mood-badge { padding: 3px 8px; border-radius: 20px; font-size: 9px; letter-spacing: 0.06em; border: 1px solid; cursor: pointer; transition: all 0.12s; text-transform: uppercase; background: transparent; font-family: 'JetBrains Mono', monospace; }
-  .mood-badge.reflect   { color: #7fc9c9; border-color: rgba(127,201,201,0.25); }
-  .mood-badge.reflect.on{ background: rgba(127,201,201,0.12); }
-  .mood-badge.wonder    { color: var(--accent); border-color: rgba(184,156,232,0.25); }
-  .mood-badge.wonder.on { background: var(--accent3); }
-  .mood-badge.vent      { color: #e28b6a; border-color: rgba(226,139,106,0.25); }
-  .mood-badge.vent.on   { background: rgba(226,139,106,0.1); }
-  .mood-badge.gratitude { color: var(--gold); border-color: rgba(212,168,75,0.25); }
-  .mood-badge.gratitude.on { background: rgba(212,168,75,0.08); }
+  /* Mood badges — pastel sticky tabs */
+  .mood-badge {
+    padding: 4px 11px 5px;
+    border-radius: 3px;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .mood-badge.reflect   { color: #2B8A7A; border-color: #B0DDD2; background: rgba(176,221,210,0.12); }
+  .mood-badge.reflect.on{ background: #CFF0E6; border-color: #6DBFAB; box-shadow: 0 2px 8px rgba(43,138,122,0.12); }
+  .mood-badge.wonder    { color: var(--accent); border-color: #C9B8E0; background: rgba(201,184,224,0.10); }
+  .mood-badge.wonder.on { background: #E4D8F4; border-color: #A98FD0; box-shadow: 0 2px 8px rgba(123,94,167,0.12); }
+  .mood-badge.vent      { color: #BF5638; border-color: #E8C0B0; background: rgba(232,192,176,0.12); }
+  .mood-badge.vent.on   { background: #F5D8CC; border-color: #D4916C; box-shadow: 0 2px 8px rgba(191,86,56,0.12); }
+  .mood-badge.gratitude { color: #96700A; border-color: #E0CFA0; background: rgba(224,207,160,0.12); }
+  .mood-badge.gratitude.on { background: #F2E6C0; border-color: #C5A84E; box-shadow: 0 2px 8px rgba(150,112,10,0.12); }
 
-  .save-status { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px; transition: color 0.3s; }
-  .save-dot    { width: 5px; height: 5px; border-radius: 50%; background: var(--text3); transition: background 0.3s; }
-  .save-status.saved   .save-dot { background: #63c47a; }
-  .save-status.saved   { color: #63c47a; }
+  .save-status {
+    font-size: 9px; color: var(--text3); letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 5px; transition: color 0.3s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .save-dot    { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); transition: background 0.3s; }
+  .save-status.saved   .save-dot { background: #4E9A5E; }
+  .save-status.saved   { color: #4E9A5E; }
   .save-status.unsaved .save-dot { background: var(--gold); }
   .save-status.unsaved { color: var(--gold); }
 
-  .topbar-btn { padding: 5px 10px; background: transparent; border: 1px solid var(--border2); border-radius: 5px; color: var(--text2); font-size: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; letter-spacing: 0.04em; transition: all 0.12s; }
-  .topbar-btn:hover { background: var(--bg3); color: var(--text); }
+  .topbar-btn {
+    padding: 5px 14px;
+    background: transparent;
+    border: 1.5px solid var(--border2);
+    border-radius: 20px;
+    color: var(--text2);
+    font-size: 11.5px;
+    font-family: 'EB Garamond', serif;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+  }
+  .topbar-btn:hover { background: var(--bg3); color: var(--text); border-color: var(--text3); }
 
-  .title-row { padding: 32px 60px 0; }
-  #entry-title-input { width: 100%; background: transparent; border: none; outline: none; font-family: 'Lora', serif; font-size: 26px; font-weight: 500; color: var(--text); letter-spacing: 0.01em; caret-color: var(--accent); }
-  #entry-title-input::placeholder { color: var(--text3); }
-  .title-line { margin: 10px 60px 0; height: 1px; background: var(--border); }
+  .title-row {
+    padding: 28px 52px 0 60px;
+    position: relative;
+  }
+  /* Margin line through title area */
+  .title-row::before {
+    content: '';
+    position: absolute;
+    left: 39px; top: 0; bottom: 0;
+    width: 1.5px;
+    background: var(--margin);
+    pointer-events: none;
+  }
 
-  .writing-wrapper { flex: 1; overflow-y: auto; padding: 24px 60px 60px; }
+  #entry-title-input {
+    width: 100%;
+    background: transparent;
+    border: none; outline: none;
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    caret-color: var(--accent);
+  }
+  #entry-title-input::placeholder { color: var(--text3); font-weight: 400; }
+
+  .title-line {
+    margin: 10px 52px 0 60px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* The notebook writing area */
+  .writing-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 52px 60px 60px;
+    position: relative;
+    /* Vertical margin line (stays fixed while content scrolls) */
+    background-image: linear-gradient(90deg,
+      transparent 38.5px,
+      var(--margin) 38.5px,
+      var(--margin) 40px,
+      transparent 40px
+    );
+  }
   .writing-wrapper::-webkit-scrollbar { width: 4px; }
   .writing-wrapper::-webkit-scrollbar-track { background: transparent; }
-  .writing-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .writing-wrapper::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-  #main-textarea { width: 100%; min-height: 100%; background: transparent; border: none; outline: none; font-family: 'Lora', serif; font-size: 16px; line-height: 1.9; color: var(--text2); caret-color: var(--accent); resize: none; letter-spacing: 0.01em; }
+  #main-textarea {
+    width: 100%;
+    min-height: 100%;
+    background-color: transparent;
+    /* Ruled notebook lines — scroll with text */
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      var(--ruled) 31px,
+      var(--ruled) 32px
+    );
+    background-attachment: local;
+    background-position: 0 12px;
+    border: none; outline: none;
+    font-family: 'EB Garamond', serif;
+    font-size: 17px;
+    line-height: 32px;
+    color: var(--text2);
+    caret-color: var(--accent);
+    resize: none;
+    letter-spacing: 0.015em;
+    padding-top: 12px;
+  }
   #main-textarea::placeholder { color: var(--text3); font-style: italic; }
 
-  .editor-bottombar { padding: 8px 60px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .editor-bottombar {
+    padding: 8px 32px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
   .stats { display: flex; gap: 20px; }
-  .stat  { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; }
+  .stat  { font-size: 9px; color: var(--text3); letter-spacing: 0.06em; font-family: 'JetBrains Mono', monospace; }
   .stat span { color: var(--text2); }
-  .time-stamp { font-size: 9px; color: var(--text3); font-style: italic; font-family: 'Lora', serif; }
+  .time-stamp { font-size: 10.5px; color: var(--text3); font-style: italic; font-family: 'EB Garamond', serif; }
 
   /* ── WELCOME ── */
-  .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; text-align: center; gap: 16px; }
-  .welcome-glyph  { font-family: 'Lora', serif; font-size: 48px; color: var(--text3); opacity: 0.4; line-height: 1; margin-bottom: 8px; }
-  .welcome-title  { font-family: 'Lora', serif; font-size: 20px; color: var(--text2); font-weight: 400; }
-  .welcome-sub    { font-size: 11px; color: var(--text3); line-height: 1.8; max-width: 320px; font-style: italic; font-family: 'Lora', serif; }
-  .welcome-cta    { margin-top: 16px; padding: 9px 24px; background: var(--accent3); border: 1px solid rgba(184,156,232,0.25); border-radius: 6px; color: var(--accent); font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.15s; }
-  .welcome-cta:hover { background: rgba(184,156,232,0.18); }
+  .welcome-screen {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px; text-align: center; gap: 16px;
+    background: var(--paper);
+    border-radius: 6px 10px 10px 3px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 4px 16px rgba(0,0,0,0.05),
+      0 12px 32px rgba(0,0,0,0.03),
+      inset 3px 0 8px rgba(0,0,0,0.02);
+  }
+  .welcome-glyph {
+    font-family: 'Caveat', cursive;
+    font-size: 56px;
+    color: var(--text3);
+    opacity: 0.45;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .welcome-title {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .welcome-sub {
+    font-size: 14px;
+    color: var(--text3);
+    line-height: 1.8;
+    max-width: 320px;
+    font-style: italic;
+    font-family: 'EB Garamond', serif;
+  }
+  .welcome-cta {
+    margin-top: 16px;
+    padding: 10px 28px;
+    background: var(--accent3);
+    border: 1.5px solid rgba(123,94,167,0.25);
+    border-radius: 24px;
+    color: var(--accent);
+    font-size: 13px;
+    font-family: 'EB Garamond', serif;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .welcome-cta:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   .hidden { display: none !important; }
 
@@ -181,86 +467,231 @@
     opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease;
   }
   #selection-screen.visible { opacity: 1; visibility: visible; }
-  
-  .selection-title { font-family: 'Lora', serif; font-size: 22px; color: var(--text2); letter-spacing: 0.05em; font-weight: 400; font-style: italic; opacity: 0; transform: translateY(10px); animation: rise 0.6s ease forwards 0.2s; }
-  .selection-row { display: flex; gap: 20px; opacity: 0; transform: translateY(10px); animation: rise 0.6s ease forwards 0.4s; }
-  
-  .select-card {
-    width: 240px; padding: 40px 24px; background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 16px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
-  }
-  .select-card:hover { background: var(--bg3); border-color: var(--accent); transform: translateY(-4px); }
-  .select-card i { font-family: 'Lora', serif; font-style: italic; font-size: 32px; color: var(--accent); font-weight: 500; }
-  .select-card span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text2); }
-  .select-card p { font-size: 10px; color: var(--text3); font-family: 'Lora', serif; font-style: italic; margin-top: -8px; }
 
-  /* ── PROBLEMS PAGE ── */
-  #problems-page {
+  .selection-title {
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    color: var(--text2);
+    letter-spacing: 0.02em;
+    font-weight: 500;
+    opacity: 0; transform: translateY(10px);
+    animation: rise 0.6s ease forwards 0.2s;
+  }
+  .selection-row {
+    display: flex; gap: 24px;
+    opacity: 0; transform: translateY(10px);
+    animation: rise 0.6s ease forwards 0.4s;
+  }
+
+  .select-card {
+    width: 240px; padding: 44px 24px;
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .select-card:hover {
+    background: var(--bg3);
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+  }
+  .select-card i {
+    font-family: 'Caveat', cursive;
+    font-style: normal;
+    font-size: 42px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .select-card span {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text2);
+    font-family: 'EB Garamond', serif;
+  }
+  .select-card p {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    margin-top: -8px;
+  }
+
+  /* ── MILESTONES PAGE ── */
+  #milestones-page {
     position: fixed; inset: 0; background: var(--bg); z-index: 8000;
-    display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease;
+    display: flex; flex-direction: column;
+    opacity: 0; visibility: hidden; transition: opacity 0.5s ease;
     overflow: hidden;
   }
-  #problems-page.visible { opacity: 1; visibility: visible; }
-  
-  .prob-header { padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-  .prob-header-left { display: flex; align-items: center; gap: 20px; }
-  .prob-back-btn { background: transparent; border: 1px solid var(--border2); color: var(--text3); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.2s; }
-  .prob-back-btn:hover { color: var(--text); border-color: var(--text3); }
-  .prob-title { font-family: 'Lora', serif; font-size: 24px; color: var(--text); }
-  
-  .problems-body { flex: 1; overflow-y: auto; padding: 40px 60px; }
-  .problems-body::-webkit-scrollbar { width: 4px; }
-  .problems-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  
-  .problems-container { max-width: 800px; margin: 0 auto; width: 100%; }
-  
-  .prob-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; transition: all 0.2s; }
-  .prob-item.solved { border-color: rgba(99, 196, 122, 0.2); }
-  .prob-summary { padding: 18px 24px; display: flex; align-items: center; gap: 18px; cursor: pointer; }
-  .prob-summary:hover { background: var(--bg3); }
-  
-  .prob-check { width: 20px; height: 20px; border: 1.5px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
-  .prob-check:hover { border-color: var(--accent); }
-  .prob-check.on { background: var(--accent); border-color: var(--accent); }
-  .prob-check.on::after { content: 'L'; transform: scaleX(-1) rotate(-35deg); color: var(--bg); font-size: 11px; margin-top: -2px; }
-  
-  .prob-label { flex: 1; font-family: 'Lora', serif; font-size: 16px; color: var(--text2); transition: color 0.2s; }
-  .solved .prob-label { text-decoration: line-through; color: var(--text3); }
-  
-  .prob-details { display: none; padding: 0 24px 24px 62px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.1); }
-  .prob-item.open .prob-details { display: block; }
-  
+  #milestones-page.visible { opacity: 1; visibility: visible; }
+
+  .milestone-header {
+    padding: 40px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .milestone-header-left { display: flex; align-items: center; gap: 20px; }
+  .milestone-back-btn {
+    background: transparent;
+    border: 1.5px solid var(--border2);
+    color: var(--text3);
+    padding: 7px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-family: 'EB Garamond', serif;
+    letter-spacing: 0.06em;
+    transition: 0.2s;
+  }
+  .milestone-back-btn:hover { color: var(--text); border-color: var(--text2); }
+  .milestone-title {
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .milestones-body { flex: 1; overflow-y: auto; padding: 40px 60px; }
+  .milestones-body::-webkit-scrollbar { width: 4px; }
+  .milestones-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .milestones-container { max-width: 800px; margin: 0 auto; width: 100%; }
+
+  .milestone-item {
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  }
+  .milestone-item.solved { border-color: rgba(78,154,94,0.25); }
+  .milestone-summary { padding: 18px 24px; display: flex; align-items: center; gap: 18px; cursor: pointer; }
+  .milestone-summary:hover { background: var(--bg3); }
+
+  .milestone-check {
+    width: 22px; height: 22px;
+    border: 1.5px solid var(--border2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s; flex-shrink: 0;
+    background: var(--bg);
+  }
+  .milestone-check:hover { border-color: var(--accent); }
+  .milestone-check.on { background: #4E9A5E; border-color: #4E9A5E; }
+  .milestone-check.on::after { content: 'L'; transform: scaleX(-1) rotate(-35deg); color: #fff; font-size: 11px; margin-top: -2px; }
+
+  .milestone-label { flex: 1; font-family: 'EB Garamond', serif; font-size: 17px; color: var(--text2); transition: color 0.2s; }
+  .solved .milestone-label { text-decoration: line-through; color: var(--text3); }
+
+  .milestone-details {
+    display: none;
+    padding: 0 24px 24px 62px;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.015);
+  }
+  .milestone-item.open .milestone-details { display: block; }
+
   .detail-sec { margin-top: 20px; }
-  .detail-label { font-size: 9px; text-transform: uppercase; color: var(--text3); letter-spacing: 0.12em; margin-bottom: 6px; }
-  .detail-text { font-size: 14px; color: var(--text2); line-height: 1.7; font-family: 'Lora', serif; white-space: pre-wrap; }
-  .detail-meta { margin-top: 24px; font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
-  
-  .prob-del-btn { background: transparent; border: none; color: #e28b6a; font-size: 10px; cursor: pointer; opacity: 0.6; transition: 0.2s; padding: 0; }
-  .prob-del-btn:hover { opacity: 1; text-decoration: underline; }
+  .detail-label {
+    font-size: 9px; text-transform: uppercase; color: var(--text3);
+    letter-spacing: 0.12em; margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .detail-text { font-size: 15px; color: var(--text2); line-height: 1.7; font-family: 'EB Garamond', serif; white-space: pre-wrap; }
+  .detail-meta {
+    margin-top: 24px; font-size: 11px; color: var(--text3);
+    display: flex; align-items: center; gap: 20px;
+    border-top: 1px solid var(--border); padding-top: 16px;
+    font-family: 'EB Garamond', serif;
+  }
+
+  .milestone-del-btn {
+    background: transparent; border: none; color: #B8443A;
+    font-size: 11px; cursor: pointer; opacity: 0.6;
+    transition: 0.2s; padding: 0; font-family: 'EB Garamond', serif;
+  }
+  .milestone-del-btn:hover { opacity: 1; text-decoration: underline; }
 
   /* ── MODAL ── */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(8,8,10,0.85); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(60, 50, 35, 0.40);
+    z-index: 10000;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+  }
   .modal-overlay.visible { display: flex; }
-  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; width: 540px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: translateY(20px); animation: rise 0.4s ease forwards; }
-  .modal-h { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 28px; color: var(--text); }
-  
-  .form-group { margin-bottom: 24px; }
-  .form-label { display: block; font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.1em; }
-  .form-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; color: var(--text); font-family: 'Lora', serif; font-size: 15px; outline: none; transition: 0.2s; }
-  .form-input:focus { border-color: var(--accent); background: var(--bg2); }
-  .form-textarea { height: 120px; resize: none; line-height: 1.6; }
-  
-  .form-btns { display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; }
-  .btn-s { padding: 12px 24px; border-radius: 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; text-transform: uppercase; letter-spacing: 0.1em; }
-  .btn-cancel { background: transparent; color: var(--text3); border-color: var(--border); }
-  .btn-cancel:hover { color: var(--text); border-color: var(--text3); }
-  .btn-save { background: var(--accent3); color: var(--accent); border-color: rgba(184,156,232,0.3); }
-  .btn-save:hover { background: var(--accent); color: var(--bg); }
-  
-  .empty-probs { padding: 80px 20px; text-align: center; color: var(--text3); font-family: 'Lora', serif; font-style: italic; font-size: 15px; }
+  .modal {
+    background: var(--paper);
+    border: 1.5px solid var(--border2);
+    border-radius: 16px;
+    width: 540px;
+    padding: 40px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.10);
+    transform: translateY(20px);
+    animation: rise 0.4s ease forwards;
+  }
+  .modal-h {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
 
+  .form-group { margin-bottom: 24px; }
+  .form-label {
+    display: block; font-size: 9.5px; color: var(--text3);
+    text-transform: uppercase; margin-bottom: 10px;
+    letter-spacing: 0.1em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); background: #fff; }
+  .form-textarea { height: 120px; resize: none; line-height: 1.6; }
+
+  .form-btns { display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; }
+  .btn-s {
+    padding: 11px 24px;
+    border-radius: 24px;
+    font-size: 12px;
+    font-family: 'EB Garamond', serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .btn-cancel { background: transparent; color: var(--text3); border-color: var(--border2); }
+  .btn-cancel:hover { color: var(--text); border-color: var(--text2); }
+  .btn-save { background: var(--accent3); color: var(--accent); border-color: rgba(123,94,167,0.25); }
+  .btn-save:hover { background: var(--accent); color: #fff; }
+
+  .empty-milestones {
+    padding: 80px 20px; text-align: center;
+    color: var(--text3);
+    font-family: 'Caveat', cursive;
+    font-size: 19px;
+  }
 
   /* ── AUTH SCREEN ── */
   #auth-screen {
@@ -269,29 +700,52 @@
     opacity: 0; visibility: hidden; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
   #auth-screen.visible { opacity: 1; visibility: visible; }
-  
+
   .auth-card {
-    width: 380px; padding: 48px; background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 16px; display: flex; flex-direction: column; gap: 32px;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    width: 390px; padding: 48px;
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    display: flex; flex-direction: column; gap: 32px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.07);
     opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
   }
   #auth-screen.visible .auth-card { opacity: 1; transform: translateY(0); }
 
   .auth-header { text-align: center; }
-  .auth-title { font-family: 'Lora', serif; font-size: 24px; color: var(--text); font-weight: 500; letter-spacing: 0.05em; margin-bottom: 10px; }
-  .auth-sub { font-size: 10px; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
-  
-  .auth-form { display: flex; flex-direction: column; gap: 20px; }
-  .auth-btn { 
-    width: 100%; padding: 14px; background: var(--accent3); color: var(--accent);
-    border: 1px solid rgba(184,156,232,0.2); border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
-    cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.1em;
+  .auth-title {
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin-bottom: 10px;
   }
-  .auth-btn:hover { background: var(--accent); color: var(--bg); }
+  .auth-sub {
+    font-size: 10px; color: var(--text3);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .auth-form { display: flex; flex-direction: column; gap: 20px; }
+  .auth-btn {
+    width: 100%; padding: 14px;
+    background: var(--accent3); color: var(--accent);
+    border: 1.5px solid rgba(123,94,167,0.25);
+    border-radius: 24px;
+    font-size: 13px;
+    font-family: 'EB Garamond', serif;
+    cursor: pointer; transition: all 0.3s;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .auth-btn:hover { background: var(--accent); color: #fff; }
   .auth-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .auth-error { font-size: 10px; color: #e28b6a; text-align: center; min-height: 14px; font-family: 'Lora', serif; font-style: italic; }
+  .auth-error {
+    font-size: 11px; color: #B8443A;
+    text-align: center; min-height: 14px;
+    font-family: 'EB Garamond', serif; font-style: italic;
+  }
 
   /* ── LOADING OVERLAY ── */
   #loading-overlay {
@@ -299,10 +753,22 @@
     display: none; align-items: center; justify-content: center; transition: opacity 0.5s ease;
   }
   .loader-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-  .loader { width: 1px; height: 40px; background: rgba(255,255,255,0.08); position: relative; overflow: hidden; }
-  .loader::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--accent); animation: loaderFlow 1.5s infinite ease-in-out; }
+  .loader {
+    width: 2px; height: 40px;
+    background: var(--border);
+    position: relative; overflow: hidden; border-radius: 1px;
+  }
+  .loader::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--accent);
+    animation: loaderFlow 1.5s infinite ease-in-out;
+  }
   @keyframes loaderFlow { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-  .loader-text { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.25em; font-family: 'JetBrains Mono', monospace; }
+  .loader-text {
+    font-size: 10px; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.2em;
+    font-family: 'JetBrains Mono', monospace;
+  }
 
 </style>
 </head>
@@ -343,52 +809,52 @@
       <span>Normal Conversation</span>
       <p>Enter the sanctuary</p>
     </div>
-    <div class="select-card" onclick="goToProblems()">
+    <div class="select-card" onclick="goToMilestones()">
       <i>?</i>
-      <span>Problems</span>
-      <p>The problem ledger</p>
+      <span>Milestones</span>
+      <p>The milestone ledger</p>
     </div>
   </div>
 </div>
 
 <!-- ════════════════════════════════════
-     PROBLEMS PAGE
+     MILESTONES PAGE
 ════════════════════════════════════ -->
-<div id="problems-page">
-  <header class="prob-header">
-    <div class="prob-header-left">
-      <button class="prob-back-btn" onclick="backToSelection()">← back</button>
-      <h1 class="prob-title">Problem Ledger</h1>
+<div id="milestones-page">
+  <header class="milestone-header">
+    <div class="milestone-header-left">
+      <button class="milestone-back-btn" onclick="backToSelection()">← back</button>
+      <h1 class="milestone-title">Milestone Ledger</h1>
     </div>
-    <button class="new-btn" style="width:auto; padding: 10px 20px;" onclick="toggleProblemForm(true)">+ add new problem</button>
+    <button class="new-btn" style="width:auto; padding: 10px 20px;" onclick="toggleMilestoneForm(true)">+ add new milestone</button>
   </header>
 
-  <div class="problems-body">
-    <div class="problems-container" id="problems-list">
-      <!-- Problems will be rendered here -->
+  <div class="milestones-body">
+    <div class="milestones-container" id="milestones-list">
+      <!-- Milestones will be rendered here -->
     </div>
   </div>
 </div>
 
-<!-- PROBLEM MODAL -->
-<div class="modal-overlay" id="problem-modal">
+<!-- MILESTONE MODAL -->
+<div class="modal-overlay" id="milestone-modal">
   <div class="modal">
-    <h2 class="modal-h">Identify the Problem</h2>
+    <h2 class="modal-h">Identify the Milestone</h2>
     <div class="form-group">
-      <label class="form-label">Problem Title</label>
-      <input type="text" id="prob-title-input" class="form-input" placeholder="e.g. Professor Issue">
+      <label class="form-label">Milestone Title</label>
+      <input type="text" id="milestone-title-input" class="form-input" placeholder="e.g. Finish Project Proposal">
     </div>
     <div class="form-group">
-      <label class="form-label">Problem Description</label>
-      <textarea id="prob-desc-input" class="form-input form-textarea" placeholder="What is worrying you?"></textarea>
+      <label class="form-label">Milestone Description</label>
+      <textarea id="milestone-desc-input" class="form-input form-textarea" placeholder="What do you want to achieve?"></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">Solution I Will Implement</label>
-      <textarea id="prob-sol-input" class="form-input form-textarea" placeholder="How will you address this?"></textarea>
+      <label class="form-label">Action Plan</label>
+      <textarea id="milestone-sol-input" class="form-input form-textarea" placeholder="What steps will you take?"></textarea>
     </div>
     <div class="form-btns">
-      <button class="btn-s btn-cancel" onclick="toggleProblemForm(false)">Cancel</button>
-      <button class="btn-s btn-save" onclick="saveProblem()">Save Problem</button>
+      <button class="btn-s btn-cancel" onclick="toggleMilestoneForm(false)">Cancel</button>
+      <button class="btn-s btn-save" onclick="saveMilestone()">Save Milestone</button>
     </div>
   </div>
 </div>
@@ -437,7 +903,7 @@
       <button class="welcome-cta" onclick="newEntry()">begin writing</button>
     </div>
 
-    <div id="editor-view" class="hidden" style="display:flex;flex-direction:column;height:100%;">
+    <div id="editor-view" class="hidden" style="display:flex;flex-direction:column;">
       <div class="editor-topbar">
         <div class="editor-topbar-left">
           <div class="mood-badges">
@@ -453,7 +919,7 @@
             <span id="save-text">saved</span>
           </div>
           <button class="topbar-btn" onclick="saveEntry()">save</button>
-          <button class="topbar-btn" onclick="deleteCurrentEntry()" style="color:#e28b6a;border-color:rgba(226,139,106,0.2);">delete</button>
+          <button class="topbar-btn" onclick="deleteCurrentEntry()" style="color:#B8443A;border-color:rgba(184,68,58,0.22);">delete</button>
         </div>
       </div>
 
@@ -529,10 +995,10 @@
   }
 
   const STORAGE_KEY = 'deepwords_entries_v1';
-  const PROBLEMS_KEY = 'deepwords_problems_v1';
+  const MILESTONES_KEY = 'deepwords_milestones_v1';
   const MIGRATION_DONE_KEY = 'deepwords_migrated_v1';
 
-  let entries = [], problems = [], currentId = null, saveTimer = null, currentMood = null, currentUser = null;
+  let entries = [], milestones = [], currentId = null, saveTimer = null, currentMood = null, currentUser = null;
   let initTimeout;
 
   function genId() {
@@ -652,8 +1118,8 @@
 
   function onLogoutSuccess() {
     currentUser = null;
-    entries = []; problems = [];
-    document.querySelectorAll('.app, #selection-screen, #problems-page').forEach(el => el.classList.remove('visible'));
+    entries = []; milestones = [];
+    document.querySelectorAll('.app, #selection-screen, #milestones-page').forEach(el => el.classList.remove('visible'));
     document.getElementById('auth-screen').classList.add('visible');
     renderSidebar();
   }
@@ -661,8 +1127,10 @@
   async function performMigration() {
     if (localStorage.getItem(MIGRATION_DONE_KEY)) return;
     const e = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const p = JSON.parse(localStorage.getItem(PROBLEMS_KEY) || '[]');
-    if (e.length === 0 && p.length === 0) {
+    // Check old problems storage key for backward compatibility, then check milestones key
+    const oldProblems = JSON.parse(localStorage.getItem('deepwords_problems_v1') || '[]');
+    const m = JSON.parse(localStorage.getItem(MILESTONES_KEY) || '[]');
+    if (e.length === 0 && oldProblems.length === 0 && m.length === 0) {
       localStorage.setItem(MIGRATION_DONE_KEY, 'true');
       return;
     }
@@ -679,8 +1147,9 @@
       await supabaseClient.from('entries').insert(ePayload);
     }
     
-    if (p.length > 0) {
-      const pPayload = p.map(item => ({
+    const combinedMilestones = [...oldProblems, ...m];
+    if (combinedMilestones.length > 0) {
+      const pPayload = combinedMilestones.map(item => ({
         user_id: currentUser.id,
         title: item.title,
         description: item.desc,
@@ -703,24 +1172,24 @@
     if (pRes.error) throw pRes.error;
 
     entries = eRes.data.map(item => ({ id: item.id, title: item.title, body: item.body, mood: item.mood, updatedAt: new Date(item.updated_at).getTime(), createdAt: new Date(item.created_at).getTime() }));
-    problems = pRes.data.map(item => ({ id: item.id, title: item.title, desc: item.description, sol: item.solution, solved: item.is_solved, createdAt: new Date(item.created_at).getTime() }));
+    milestones = pRes.data.map(item => ({ id: item.id, title: item.title, desc: item.description, sol: item.solution, solved: item.is_solved, createdAt: new Date(item.created_at).getTime() }));
   }
 
   /* ── Original UI Navigation ── */
   function goToApp() {
     document.getElementById('selection-screen').classList.remove('visible');
-    document.getElementById('problems-page').classList.remove('visible');
+    document.getElementById('milestones-page').classList.remove('visible');
     document.getElementById('app').classList.add('visible');
   }
-  function goToProblems() {
+  function goToMilestones() {
     document.getElementById('selection-screen').classList.remove('visible');
     document.getElementById('app').classList.remove('visible');
-    document.getElementById('problems-page').classList.add('visible');
-    renderProblems();
+    document.getElementById('milestones-page').classList.add('visible');
+    renderMilestones();
   }
   function backToSelection() {
     document.getElementById('app').classList.remove('visible');
-    document.getElementById('problems-page').classList.remove('visible');
+    document.getElementById('milestones-page').classList.remove('visible');
     document.getElementById('selection-screen').classList.add('visible');
   }
 
@@ -856,25 +1325,25 @@
     document.getElementById('time-stamp').textContent = new Date(ts).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
   }
 
-  /* ── Problems Ledger Logic ── */
-  function toggleProblemForm(show) {
-    const modal = document.getElementById('problem-modal');
+  /* ── Milestones Ledger Logic ── */
+  function toggleMilestoneForm(show) {
+    const modal = document.getElementById('milestone-modal');
     modal.classList.toggle('visible', show);
     if (!show) {
-      document.getElementById('prob-title-input').value = '';
-      document.getElementById('prob-desc-input').value = '';
-      document.getElementById('prob-sol-input').value = '';
+      document.getElementById('milestone-title-input').value = '';
+      document.getElementById('milestone-desc-input').value = '';
+      document.getElementById('milestone-sol-input').value = '';
     }
   }
 
-  function saveProblem() {
-    const title = document.getElementById('prob-title-input').value.trim();
-    const desc = document.getElementById('prob-desc-input').value.trim();
-    const sol = document.getElementById('prob-sol-input').value.trim();
+  function saveMilestone() {
+    const title = document.getElementById('milestone-title-input').value.trim();
+    const desc = document.getElementById('milestone-desc-input').value.trim();
+    const sol = document.getElementById('milestone-sol-input').value.trim();
     
     if (!title) return alert('Please provide a title.');
 
-    const newProb = {
+    const newMilestone = {
       id: genId(),
       title,
       desc,
@@ -883,77 +1352,77 @@
       createdAt: Date.now()
     };
 
-    problems.unshift(newProb);
-    renderProblems();
-    toggleProblemForm(false);
+    milestones.unshift(newMilestone);
+    renderMilestones();
+    toggleMilestoneForm(false);
 
     if (currentUser) {
       const payload = {
-        id: newProb.id,
+        id: newMilestone.id,
         user_id: currentUser.id,
-        title: newProb.title,
-        description: newProb.desc,
-        solution: newProb.sol,
-        is_solved: newProb.solved,
-        created_at: new Date(newProb.createdAt).toISOString()
+        title: newMilestone.title,
+        description: newMilestone.desc,
+        solution: newMilestone.sol,
+        is_solved: newMilestone.solved,
+        created_at: new Date(newMilestone.createdAt).toISOString()
       };
       supabaseClient.from('problems').insert(payload).then();
     }
   }
 
-  function toggleSolve(id, event) {
+  function toggleComplete(id, event) {
     if (event) event.stopPropagation();
-    const idx = problems.findIndex(p => p.id === id);
+    const idx = milestones.findIndex(m => m.id === id);
     if (idx !== -1) {
-      problems[idx].solved = !problems[idx].solved;
-      renderProblems();
+      milestones[idx].solved = !milestones[idx].solved;
+      renderMilestones();
       if (currentUser) {
-         supabaseClient.from('problems').update({ is_solved: problems[idx].solved }).eq('id', id).then();
+         supabaseClient.from('problems').update({ is_solved: milestones[idx].solved }).eq('id', id).then();
       }
     }
   }
 
-  function deleteProblem(id, event) {
+  function deleteMilestone(id, event) {
     if (event) event.stopPropagation();
-    if (!confirm('Are you sure you want to delete this problem?')) return;
-    problems = problems.filter(p => p.id !== id);
-    renderProblems();
+    if (!confirm('Are you sure you want to delete this milestone?')) return;
+    milestones = milestones.filter(m => m.id !== id);
+    renderMilestones();
     if (currentUser) {
       supabaseClient.from('problems').delete().eq('id', id).then();
     }
   }
 
   function toggleExpand(id) {
-    const el = document.getElementById(`prob-${id}`);
+    const el = document.getElementById(`milestone-${id}`);
     if (el) el.classList.toggle('open');
   }
 
-  function renderProblems() {
-    const list = document.getElementById('problems-list');
-    if (problems.length === 0) {
-      if(list) list.innerHTML = '<div class="empty-probs">Your ledger is empty.<br>Identify what weighs on you and plan your path forward.</div>';
+  function renderMilestones() {
+    const list = document.getElementById('milestones-list');
+    if (milestones.length === 0) {
+      if(list) list.innerHTML = '<div class="empty-milestones">Your ledger is empty.<br>Identify your milestones and track your journey forward.</div>';
       return;
     }
 
-    if(list) list.innerHTML = problems.map(p => `
-      <div class="prob-item ${p.solved ? 'solved' : ''}" id="prob-${p.id}">
-        <div class="prob-summary" onclick="toggleExpand('${p.id}')">
-          <div class="prob-check ${p.solved ? 'on' : ''}" onclick="toggleSolve('${p.id}', event)"></div>
-          <div class="prob-label">${escHtml(p.title)}</div>
+    if(list) list.innerHTML = milestones.map(m => `
+      <div class="milestone-item ${m.solved ? 'solved' : ''}" id="milestone-${m.id}">
+        <div class="milestone-summary" onclick="toggleExpand('${m.id}')">
+          <div class="milestone-check ${m.solved ? 'on' : ''}" onclick="toggleComplete('${m.id}', event)"></div>
+          <div class="milestone-label">${escHtml(m.title)}</div>
         </div>
-        <div class="prob-details">
+        <div class="milestone-details">
           <div class="detail-sec">
-            <div class="detail-label">Problem</div>
-            <div class="detail-text">${escHtml(p.desc || 'No description provided.')}</div>
+            <div class="detail-label">Milestone</div>
+            <div class="detail-text">${escHtml(m.desc || 'No description provided.')}</div>
           </div>
           <div class="detail-sec">
-            <div class="detail-label">Planned Solution</div>
-            <div class="detail-text">${escHtml(p.sol || 'No solution planned yet.')}</div>
+            <div class="detail-label">Action Plan</div>
+            <div class="detail-text">${escHtml(m.sol || 'No action plan planned yet.')}</div>
           </div>
           <div class="detail-meta">
-            <span>Created ${new Date(p.createdAt).toLocaleDateString()}</span>
-            <span>Status: ${p.solved ? 'Solved' : 'Active'}</span>
-            <button class="prob-del-btn" onclick="deleteProblem('${p.id}', event)">Delete</button>
+            <span>Created ${new Date(m.createdAt).toLocaleDateString()}</span>
+            <span>Status: ${m.solved ? 'Completed' : 'Active'}</span>
+            <button class="milestone-del-btn" onclick="deleteMilestone('${m.id}', event)">Delete</button>
           </div>
         </div>
       </div>
